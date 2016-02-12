@@ -10,23 +10,23 @@ from time import sleep
 #Volume Sensitivity, 0.05: Extremely Sensitive, may give false alarms
 #             0.1: Probably Ideal volume
 #             1: Poorly sensitive, will only go off for relatively loud
-SENSITIVITY= 1.0
-# Alarm frequencies (Hz) to detect (Use audacity to record a wave and then do Analyze->Plot Spectrum)
+SENSITIVITY= 1
+# Alarm frequency (Hz) to detect (Set frequencyoutput to True if you need to detect what frequency to use)
 TONE = 3500
-#Bandwidth for detection (i.e., detect frequencies within this margin of error of the TONE)
+#Bandwidth for detection (i.e., detect frequencies +- within this margin of error of the TONE)
 BANDWIDTH = 30
-#How many 46ms blips before we declare a beep? (Take the beep length in ms, divide by 46ms, subtract a bit)
+#How many 46ms blips before we declare a beep? (Set frequencyoutput to True if you need to determine how many blips are found, then subtract some)
 beeplength=8
-# How many beeps before we declare an alarm?
+# How many beeps before we declare an alarm? (Avoids false alarms)
 alarmlength=5
-# How many false 46ms blips before we declare the alarm is not ringing
+# How many false 46ms blips before we declare there are no more beeps? (May need to be increased if there are expected long pauses between beeps) 
 resetlength=10
-# How many reset counts until we clear an active alarm?
+# How many reset counts until we clear an active alarm? (Keep the alarm active even if we don't hear this many beeps)
 clearlength=30
-# Enable blip, beep, and reset debug output
+# Enable blip, beep, and reset debug output (useful for understanding when blips, beeps, and resets are being found)
 debug=False
-# Show the most intense frequency detected (useful for configuration)
-frequencyoutput=True
+# Show the most intense frequency detected (useful for configuration of the frequency and beep lengths)
+frequencyoutput=False
 
 
 # Audio Sampler
@@ -64,8 +64,9 @@ while True:
             thefreq = (which+x1)*SAMPLING_RATE/NUM_SAMPLES
         else:
             thefreq = which*SAMPLING_RATE/NUM_SAMPLES
-        print "\t\t\t\tfreq=",thefreq
     if max(intensity[(frequencies < TONE+BANDWIDTH) & (frequencies > TONE-BANDWIDTH )]) > max(intensity[(frequencies < TONE-1000) & (frequencies > TONE-2000)]) + SENSITIVITY:
+        if frequencyoutput:
+            print "\t\t\t\tfreq=",thefreq
         blipcount+=1
         resetcount=0
         if debug: print "\t\tBlip",blipcount
@@ -80,6 +81,8 @@ while True:
                 print "Alarm!"
                 beepcount=0
     else:
+        if frequencyoutput:
+            print "\t\t\t\tfreq="
         blipcount=0
         resetcount+=1
         if debug: print "\t\t\treset",resetcount
