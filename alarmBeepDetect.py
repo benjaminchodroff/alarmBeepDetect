@@ -82,7 +82,7 @@ while True:
                 beepcount=0
     else:
         if frequencyoutput:
-            print "\t\t\t\tfreq="
+            print "\t\t\t\tfreq=",thefreq
         blipcount=0
         resetcount+=1
         if debug: print "\t\t\treset",resetcount
