@@ -77,7 +77,7 @@ while True:
             resetcount=0
             beepcount+=1
             if debug: print("\tBeep",beepcount)
-            if (beepcount>=alarmlength):
+            if (beepcount>=alarmlength and not alarm):
                 clearcount=0
                 alarm=True
                 print("Alarm!")
